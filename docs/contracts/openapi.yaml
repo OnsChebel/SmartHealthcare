@@ -1,190 +1,183 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
-  title: Portail Patient & Rendez-vous API (REST)
-  version: 1.0.0
-  description: Gestion des rendez-vous médicaux, ordonnances et profils patients.
+  title: OpenAPI definition
+  version: v0
 servers:
-  - url: http://localhost:8080/api/rest
-    description: Accès via l'API Gateway
-
+- url: http://localhost:8088
+  description: Generated server url
 paths:
-  /creneaux:
-    get:
-      summary: Consulter les créneaux médicaux disponibles
-      parameters:
-        - name: specialite
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des créneaux disponibles
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Creneau'
-
-  /rendez-vous:
-    get:
-      summary: Lister les rendez-vous d'un patient
-      parameters:
-        - name: patientId
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des rendez-vous
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RendezVous'
-    post:
-      summary: Créer un rendez-vous (standard ou urgence via orchestrateur)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RendezVousInput'
-      responses:
-        '201':
-          description: Rendez-vous créé
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RendezVous'
-
-  /rendez-vous/{id}:
+  /api/rest/rendez-vous/{id}:
     put:
-      summary: Modifier un rendez-vous existant
+      tags:
+      - patient-portal-controller
+      operationId: modifierRendezVous
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
+      - name: id
+        in: path
         required: true
+        schema:
+          type: string
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RendezVousInput'
+              $ref: "#/components/schemas/RendezVous"
+        required: true
       responses:
-        '200':
-          description: Rendez-vous mis à jour
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RendezVous"
     delete:
-      summary: Annuler un rendez-vous
+      tags:
+      - patient-portal-controller
+      operationId: annulerRendezVous
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Rendez-vous supprimé
-
-  /patients/{patientId}:
-    get:
-      summary: Consulter le profil d'un patient
-      parameters:
-        - name: patientId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Profil patient
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PatientProfil'
-    put:
-      summary: Mettre à jour le profil et les coordonnées du patient
-      parameters:
-        - name: patientId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
+      - name: id
+        in: path
         required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/rest/patients/{patientId}:
+    get:
+      tags:
+      - patient-portal-controller
+      operationId: getProfil
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PatientProfil"
+    put:
+      tags:
+      - patient-portal-controller
+      operationId: updateProfil
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientProfil'
+              $ref: "#/components/schemas/PatientProfil"
+        required: true
       responses:
-        '200':
-          description: Profil mis à jour
-
-  /patients/{patientId}/ordonnances:
-    get:
-      summary: Consulter l'historique des prescriptions et ordonnances
-      parameters:
-        - name: patientId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des ordonnances
+        "200":
+          description: OK
           content:
-            application/json:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PatientProfil"
+  /api/rest/rendez-vous:
+    get:
+      tags:
+      - patient-portal-controller
+      operationId: getRendezVous
+      parameters:
+      - name: patientId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Ordonnance'
-
+                  $ref: "#/components/schemas/RendezVous"
+    post:
+      tags:
+      - patient-portal-controller
+      operationId: creerRendezVous
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RendezVous"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RendezVous"
+  /api/rest/patients/{patientId}/ordonnances:
+    get:
+      tags:
+      - patient-portal-controller
+      operationId: getOrdonnances
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ordonnance"
+  /api/rest/creneaux:
+    get:
+      tags:
+      - patient-portal-controller
+      operationId: getCreneaux
+      parameters:
+      - name: specialite
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Creneau"
 components:
   schemas:
-    Creneau:
+    RendezVous:
       type: object
       properties:
         id:
           type: string
-        medecin:
-          type: string
-        specialite:
-          type: string
-        dateHeure:
-          type: string
-          format: date-time
-        disponible:
-          type: boolean
-
-    RendezVousInput:
-      type: object
-      required: [patientId, medecin, dateHeure]
-      properties:
         patientId:
           type: string
         medecin:
           type: string
         dateHeure:
           type: string
-          format: date-time
         estUrgence:
           type: boolean
-          default: false
-
-    RendezVous:
-      allOf:
-        - $ref: '#/components/schemas/RendezVousInput'
-        - type: object
-          properties:
-            id:
-              type: string
-            statut:
-              type: string
-
+        statut:
+          type: string
     PatientProfil:
       type: object
       properties:
@@ -200,7 +193,6 @@ components:
           type: string
         codeVignetteCNAM:
           type: string
-
     Ordonnance:
       type: object
       properties:
@@ -214,3 +206,16 @@ components:
           type: array
           items:
             type: string
+    Creneau:
+      type: object
+      properties:
+        id:
+          type: string
+        medecin:
+          type: string
+        specialite:
+          type: string
+        dateHeure:
+          type: string
+        disponible:
+          type: boolean
