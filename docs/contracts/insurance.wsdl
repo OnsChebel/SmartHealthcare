@@ -1,0 +1,176 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://healthcare.com/soap/insurance" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://healthcare.com/soap/insurance" targetNamespace="http://healthcare.com/soap/insurance">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://healthcare.com/soap/insurance">
+            <!--  Droits à la couverture  -->
+            <xs:element name="verifierDroitsCNAMRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="patientId" type="xs:string"/>
+                        <xs:element name="codeVignetteCNAM" type="xs:string"/>
+                        <xs:element name="codeActe" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="verifierDroitsCNAMResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="estEligible" type="xs:boolean"/>
+                        <xs:element name="tauxRemboursement" type="xs:int"/>
+                        <!--  80 ou 50  -->
+                        <xs:element name="regime" type="xs:string"/>
+                        <xs:element name="message" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <!--  Acte médical et feuille de soin  -->
+            <xs:element name="emettreFeuilleDeSoinsRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="patientId" type="xs:string"/>
+                        <xs:element name="codeVignetteCNAM" type="xs:string"/>
+                        <xs:element name="lettreCleActe" type="xs:string"/>
+                        <!--  Ex: C, CS, K  -->
+                        <xs:element name="montantTotal" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="emettreFeuilleDeSoinsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="numeroFeuilleCertifiee" type="xs:string"/>
+                        <xs:element name="partRemboursee" type="xs:double"/>
+                        <xs:element name="statutValidation" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <!--  Historique médical  -->
+            <xs:element name="consulterHistoriqueRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="patientId" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="consulterHistoriqueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="feuillesDeSoins" type="tns:FeuilleSoinCertifiee"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <!--  Garanties prise en charge  -->
+            <xs:element name="comparerGarantiesRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="regimeA" type="xs:string"/>
+                        <xs:element name="regimeB" type="xs:string"/>
+                        <xs:element name="lettreCleActe" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="comparerGarantiesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="tauxRegimeA" type="xs:int"/>
+                        <xs:element name="tauxRegimeB" type="xs:int"/>
+                        <xs:element name="recommandation" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="FeuilleSoinCertifiee">
+                <xs:sequence>
+                    <xs:element name="numeroFeuille" type="xs:string"/>
+                    <xs:element name="lettreCleActe" type="xs:string"/>
+                    <xs:element name="montant" type="xs:double"/>
+                    <xs:element name="dateActe" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="comparerGarantiesResponse">
+        <wsdl:part element="tns:comparerGarantiesResponse" name="comparerGarantiesResponse"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="verifierDroitsCNAMResponse">
+        <wsdl:part element="tns:verifierDroitsCNAMResponse" name="verifierDroitsCNAMResponse"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="emettreFeuilleDeSoinsResponse">
+        <wsdl:part element="tns:emettreFeuilleDeSoinsResponse" name="emettreFeuilleDeSoinsResponse"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="consulterHistoriqueRequest">
+        <wsdl:part element="tns:consulterHistoriqueRequest" name="consulterHistoriqueRequest"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="consulterHistoriqueResponse">
+        <wsdl:part element="tns:consulterHistoriqueResponse" name="consulterHistoriqueResponse"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="comparerGarantiesRequest">
+        <wsdl:part element="tns:comparerGarantiesRequest" name="comparerGarantiesRequest"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="emettreFeuilleDeSoinsRequest">
+        <wsdl:part element="tns:emettreFeuilleDeSoinsRequest" name="emettreFeuilleDeSoinsRequest"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="verifierDroitsCNAMRequest">
+        <wsdl:part element="tns:verifierDroitsCNAMRequest" name="verifierDroitsCNAMRequest"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="InsurancePort">
+        <wsdl:operation name="comparerGaranties">
+            <wsdl:input message="tns:comparerGarantiesRequest" name="comparerGarantiesRequest"> </wsdl:input>
+            <wsdl:output message="tns:comparerGarantiesResponse" name="comparerGarantiesResponse"> </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="verifierDroitsCNAM">
+            <wsdl:input message="tns:verifierDroitsCNAMRequest" name="verifierDroitsCNAMRequest"> </wsdl:input>
+            <wsdl:output message="tns:verifierDroitsCNAMResponse" name="verifierDroitsCNAMResponse"> </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="emettreFeuilleDeSoins">
+            <wsdl:input message="tns:emettreFeuilleDeSoinsRequest" name="emettreFeuilleDeSoinsRequest"> </wsdl:input>
+            <wsdl:output message="tns:emettreFeuilleDeSoinsResponse" name="emettreFeuilleDeSoinsResponse"> </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="consulterHistorique">
+            <wsdl:input message="tns:consulterHistoriqueRequest" name="consulterHistoriqueRequest"> </wsdl:input>
+            <wsdl:output message="tns:consulterHistoriqueResponse" name="consulterHistoriqueResponse"> </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InsurancePortSoap11" type="tns:InsurancePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="comparerGaranties">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="comparerGarantiesRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="comparerGarantiesResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="verifierDroitsCNAM">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="verifierDroitsCNAMRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="verifierDroitsCNAMResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="emettreFeuilleDeSoins">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="emettreFeuilleDeSoinsRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="emettreFeuilleDeSoinsResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="consulterHistorique">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="consulterHistoriqueRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="consulterHistoriqueResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InsurancePortService">
+        <wsdl:port binding="tns:InsurancePortSoap11" name="InsurancePortSoap11">
+            <soap:address location="http://localhost:8081/ws"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

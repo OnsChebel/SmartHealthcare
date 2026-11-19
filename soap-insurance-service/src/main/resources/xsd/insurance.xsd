@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://healthcare.com/soap/insurance"
+           xmlns:tns="http://healthcare.com/soap/insurance"
+           elementFormDefault="qualified">
+
+    <!-- Droits à la couverture -->
+    <xs:element name="verifierDroitsCNAMRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="patientId" type="xs:string"/>
+                <xs:element name="codeVignetteCNAM" type="xs:string"/>
+                <xs:element name="codeActe" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="verifierDroitsCNAMResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="estEligible" type="xs:boolean"/>
+                <xs:element name="tauxRemboursement" type="xs:int"/> <!-- 80 ou 50 -->
+                <xs:element name="regime" type="xs:string"/>
+                <xs:element name="message" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Acte médical et feuille de soin -->
+    <xs:element name="emettreFeuilleDeSoinsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="patientId" type="xs:string"/>
+                <xs:element name="codeVignetteCNAM" type="xs:string"/>
+                <xs:element name="lettreCleActe" type="xs:string"/> <!-- Ex: C, CS, K -->
+                <xs:element name="montantTotal" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="emettreFeuilleDeSoinsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="numeroFeuilleCertifiee" type="xs:string"/>
+                <xs:element name="partRemboursee" type="xs:double"/>
+                <xs:element name="statutValidation" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Historique médical -->
+    <xs:element name="consulterHistoriqueRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="patientId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="consulterHistoriqueResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="feuillesDeSoins" type="tns:FeuilleSoinCertifiee" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Garanties prise en charge -->
+    <xs:element name="comparerGarantiesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="regimeA" type="xs:string"/>
+                <xs:element name="regimeB" type="xs:string"/>
+                <xs:element name="lettreCleActe" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="comparerGarantiesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="tauxRegimeA" type="xs:int"/>
+                <xs:element name="tauxRegimeB" type="xs:int"/>
+                <xs:element name="recommandation" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="FeuilleSoinCertifiee">
+        <xs:sequence>
+            <xs:element name="numeroFeuille" type="xs:string"/>
+            <xs:element name="lettreCleActe" type="xs:string"/>
+            <xs:element name="montant" type="xs:double"/>
+            <xs:element name="dateActe" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
