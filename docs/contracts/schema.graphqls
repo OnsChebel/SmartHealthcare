@@ -1,0 +1,66 @@
+type Query {
+    # Extraction d'un dossier patient
+    patientDashboard(patientId: ID!): PatientDossier
+
+    # Filtrage des patients
+    filtrerPatients(
+        serviceHospitalier: String
+        pathologie: String
+        niveauRisque: String
+    ): [PatientDossier]
+
+    # Agrégation à la demande de l'historique de soins
+    historiqueSoinsPatient(patientId: ID!): [ActeSoin]
+}
+
+type Mutation {
+    # Publier la fiche d'intervention d'urgence par l'orchestrateur
+    enregistrerInterventionUrgence(input: InterventionUrgenceInput!): FicheInterventionUrgence
+}
+
+type PatientDossier {
+    patientId: ID!
+    nomComplet: String!
+    serviceHospitalier: String!
+    pathologie: String!
+    niveauRisque: String!
+    dernieresConstantes: ConstantesVitales
+    alertesRecentes: [AlerteMedicale]
+    traitementEnCours: [String]
+}
+
+type ConstantesVitales {
+    frequenceCardiaque: Int
+    saturationOxygene: Int
+    horodatage: String
+}
+
+type AlerteMedicale {
+    id: ID!
+    typeAlerte: String!
+    gravite: String!
+    horodatage: String!
+}
+
+type ActeSoin {
+    id: ID!
+    date: String!
+    description: String!
+    praticien: String!
+}
+
+type FicheInterventionUrgence {
+    id: ID!
+    patientId: ID!
+    typeAlerte: String!
+    assuranceValidee: Boolean!
+    rendezVousUrgenceId: String!
+    statutPriseEnCharge: String!
+}
+
+input InterventionUrgenceInput {
+    patientId: ID!
+    typeAlerte: String!
+    assuranceValidee: Boolean!
+    rendezVousUrgenceId: String!
+}
